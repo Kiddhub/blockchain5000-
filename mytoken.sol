@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 < 0.9.0;
 
 contract MyToken {
@@ -7,6 +8,7 @@ contract MyToken {
     uint256 public totalSupply = 1000000;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    mapping (address => mapping(address => uint256)) allowed;
     mapping (address => uint256) balances;
     constructor() {
         balances[msg.sender] = totalSupply;
@@ -21,4 +23,15 @@ contract MyToken {
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
+    function transferForm(address _from, address _to , uint256 _value) public returns (bool success){
+        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value >0);
+        balances[_from] -= _value;
+        balances[_to] += _value;
+        allowed[_from][msg.sender] -= _value;
+        emit Transfer(_from,_to,_value);
+        return true;
+
+    }
+
 }
+
